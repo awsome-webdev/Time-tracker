@@ -1,6 +1,6 @@
 self.addEventListener('install', function(event) {
   event.waitUntil(
-    caches.open('time-tracker-cache-v3').then(function(cache) {
+    caches.open('time-tracker-cache-v6').then(function(cache) {
       return cache.addAll([
         './',
         'index.html',
@@ -22,7 +22,7 @@ self.addEventListener('fetch', function(event) {
 });
 
 self.addEventListener('activate', function(event) {
-  const cacheWhitelist = ['time-tracker-cache-v3']; // Update to match the new cache name
+  const cacheWhitelist = ['time-tracker-cache-v6']; // Update to match the new cache name
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(

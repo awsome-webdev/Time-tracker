@@ -58,7 +58,7 @@ function renderJobs() {
             }
         });
         const startBtn = document.createElement('button');
-        startBtn.innerText = job.running ? 'Stop' : 'Start';
+        startBtn.innerText = job.running ? 'Stop' : 'Start1';
         startBtn.className = 'open-button';
         startBtn.onclick = () => toggleTimer(idx);
         // Delete button
@@ -76,8 +76,15 @@ function renderJobs() {
 
 function formatDateTime(ts) {
     const d = new Date(ts);
-    // Format: YYYY-MM-DD HH:mm:ss
-    return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
+    // 12-hour format with AM/PM
+    let hours = d.getHours();
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+    const seconds = d.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 should be 12
+    // Format: YYYY-MM-DD HH:mm:ss AM/PM
+    return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} ${hours.toString().padStart(2,'0')}:${minutes}:${seconds} ${ampm}`;
 }
 
 function getElapsed(job) {

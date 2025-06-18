@@ -10,7 +10,15 @@
         <script>
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('sw.js');
+                    navigator.serviceWorker.getRegistration('sw.js').then(function(reg) {
+                        if (reg) {
+                            reg.unregister().then(function() {
+                                navigator.serviceWorker.register('sw.js');
+                            });
+                        } else {
+                            navigator.serviceWorker.register('sw.js');
+                        }
+                    });
                 });
             }
         </script>
