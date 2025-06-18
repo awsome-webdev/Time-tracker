@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>Time-tracker</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <script src="script.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#333333">
+        <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+        <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('sw.js');
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div id="bottom-bar" onclick="openJobMenu()">
+            <p style="font-size: 250%; margin-top: 50px;">New Job</p>
+        </div>
+        <div id="jobs">
+            <div class="job">
+                <p class="job-title">Job 1</p><button class="open-button" onclick="openjob(this)">Open</button>
+            </div>
+        </div>
+        <div id="jobMenu" style="display: none;">
+            <center>
+            <input type="text" id="jobName" placeholder="Job Name">
+            <div><button onclick="createJob()" id="createjob">Create Job =></button></div>
+            </center>
+        </div>
+        <div id="jobDetails" style="display: none;">
+            
+        </div>
+    </body>
+</html>
