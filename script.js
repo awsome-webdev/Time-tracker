@@ -20,9 +20,6 @@ function renderJobs() {
     jobs.forEach((job, idx) => {
         const jobDiv = document.createElement('div');
         jobDiv.className = 'job';
-        // Content column
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'job-content';
         const title = document.createElement('p');
         title.className = 'job-title';
         title.innerText = job.name;
@@ -60,23 +57,19 @@ function renderJobs() {
                 jobDiv.classList.remove('job-expanded');
             }
         });
-        contentDiv.appendChild(title);
-        contentDiv.appendChild(details);
-        // Actions column
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'job-actions';
         const startBtn = document.createElement('button');
         startBtn.innerText = job.running ? 'Stop' : 'Start';
         startBtn.className = 'open-button';
         startBtn.onclick = () => toggleTimer(idx);
+        // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.innerText = 'Delete';
         deleteBtn.className = 'delete-button';
         deleteBtn.onclick = () => deleteJob(idx);
-        actionsDiv.appendChild(startBtn);
-        actionsDiv.appendChild(deleteBtn);
-        jobDiv.appendChild(contentDiv);
-        jobDiv.appendChild(actionsDiv);
+        jobDiv.appendChild(title);
+        jobDiv.appendChild(details);
+        jobDiv.appendChild(startBtn);
+        jobDiv.appendChild(deleteBtn);
         jobsDiv.appendChild(jobDiv);
     });
 }
