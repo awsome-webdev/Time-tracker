@@ -58,7 +58,7 @@ function renderJobs() {
             }
         });
         const startBtn = document.createElement('button');
-        startBtn.innerText = job.running ? 'Stop' : 'Start1';
+        startBtn.innerText = job.running ? 'Stop' : 'Start';
         startBtn.className = 'open-button';
         startBtn.onclick = () => toggleTimer(idx);
         // Delete button
