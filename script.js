@@ -1,4 +1,4 @@
-// Job structure: { id, name, elapsed, running, lastStart }
+// Job structure: { id, name, intervals: [{start, end}], running }
 let jobs = [];
 
 function saveJobs() {
@@ -20,43 +20,85 @@ function renderJobs() {
     jobs.forEach((job, idx) => {
         const jobDiv = document.createElement('div');
         jobDiv.className = 'job';
+        // Content column
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'job-content';
         const title = document.createElement('p');
         title.className = 'job-title';
         title.innerText = job.name;
-        const timer = document.createElement('span');
-        timer.className = 'job-timer';
-        timer.id = `timer-${job.id}`;
-        timer.innerText = formatTime(getElapsed(job));
+        // Use <details> for intervals dropdown
+        const details = document.createElement('details');
+        details.className = 'intervals-details';
+        const summary = document.createElement('summary');
+        summary.innerText = 'Show Times';
+        summary.className = 'intervals-summary';
+        details.appendChild(summary);
+        // Intervals list
+        const intervalsList = document.createElement('div');
+        intervalsList.className = 'intervals-list';
+        if (job.intervals && job.intervals.length > 0) {
+            job.intervals.forEach(interval => {
+                if (!interval.start) return;
+                const entry = document.createElement('div');
+                entry.className = 'interval-entry';
+                const startStr = formatDateTime(interval.start);
+                const endStr = interval.end ? formatDateTime(interval.end) : '...';
+                entry.innerText = `${startStr} - ${endStr}`;
+                intervalsList.appendChild(entry);
+            });
+        } else {
+            const entry = document.createElement('div');
+            entry.innerText = 'No times recorded.';
+            intervalsList.appendChild(entry);
+        }
+        details.appendChild(intervalsList);
+        // Expand job element visually when details is open
+        details.addEventListener('toggle', function() {
+            if (details.open) {
+                jobDiv.classList.add('job-expanded');
+            } else {
+                jobDiv.classList.remove('job-expanded');
+            }
+        });
+        contentDiv.appendChild(title);
+        contentDiv.appendChild(details);
+        // Actions column
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'job-actions';
         const startBtn = document.createElement('button');
         startBtn.innerText = job.running ? 'Stop' : 'Start';
         startBtn.className = 'open-button';
         startBtn.onclick = () => toggleTimer(idx);
-        // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.innerText = 'Delete';
         deleteBtn.className = 'delete-button';
         deleteBtn.onclick = () => deleteJob(idx);
-        jobDiv.appendChild(title);
-        jobDiv.appendChild(timer);
-        jobDiv.appendChild(startBtn);
-        jobDiv.appendChild(deleteBtn);
+        actionsDiv.appendChild(startBtn);
+        actionsDiv.appendChild(deleteBtn);
+        jobDiv.appendChild(contentDiv);
+        jobDiv.appendChild(actionsDiv);
         jobsDiv.appendChild(jobDiv);
     });
 }
 
-function formatTime(ms) {
-    const totalSec = Math.floor(ms / 1000);
-    const h = Math.floor(totalSec / 3600);
-    const m = Math.floor((totalSec % 3600) / 60);
-    const s = totalSec % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+function formatDateTime(ts) {
+    const d = new Date(ts);
+    // Format: YYYY-MM-DD HH:mm:ss
+    return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
 }
 
 function getElapsed(job) {
-    if (job.running) {
-        return job.elapsed + (Date.now() - job.lastStart);
+    let elapsed = 0;
+    if (job.intervals && Array.isArray(job.intervals)) {
+        job.intervals.forEach(interval => {
+            if (interval.start && interval.end) {
+                elapsed += interval.end - interval.start;
+            } else if (interval.start && !interval.end && job.running) {
+                elapsed += Date.now() - interval.start;
+            }
+        });
     }
-    return job.elapsed;
+    return elapsed;
 }
 
 function updateTimers() {
@@ -85,9 +127,8 @@ function createJob() {
     const newJob = {
         id: Date.now(),
         name: jobName,
-        elapsed: 0,
-        running: false,
-        lastStart: null
+        intervals: [],
+        running: false
     };
     jobs.push(newJob);
     saveJobs();
@@ -100,14 +141,17 @@ function createJob() {
 
 function toggleTimer(idx) {
     const job = jobs[idx];
+    if (!job.intervals) job.intervals = [];
     if (job.running) {
-        // Stop timer
-        job.elapsed += Date.now() - job.lastStart;
+        // Stop timer: set end time for last interval
+        const lastInterval = job.intervals[job.intervals.length - 1];
+        if (lastInterval && !lastInterval.end) {
+            lastInterval.end = Date.now();
+        }
         job.running = false;
-        job.lastStart = null;
     } else {
-        // Start timer
-        job.lastStart = Date.now();
+        // Start timer: add new interval
+        job.intervals.push({ start: Date.now(), end: null });
         job.running = true;
     }
     saveJobs();

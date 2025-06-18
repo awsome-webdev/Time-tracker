@@ -44,9 +44,10 @@ body {
 .open-button {
     position: relative;
     right: -79%;
-    top: -60%;
+    top: -90%;
     margin: 20px;
     scale: 3;
+    z-index: 2;
 }
 #jobName {
     position: absolute;
@@ -67,13 +68,14 @@ body {
     padding: 10px;
     scale: 3;
 }
-.job-timer {
+.job-Intervals {
     position: absolute;
     scale: 2;
     left: 10%;
 }
 .delete-button {
     position: relative;
+    z-index: 2;
     margin-left: 20px;
     background-color: #e74c3c;
     color: white;
@@ -84,5 +86,36 @@ body {
     cursor: pointer;
     scale: 2;
     right: -70%;
-    top: -10%;
+    top: -40%;
+}
+.intervals-details {
+    display: block;
+    margin: 10px 0;
+}
+.intervals-summary {
+    font-size: 2.5em;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    padding: 6px 0;
+}
+.intervals-list {
+    margin: 10px 0 0 20px;
+    padding: 8px 0;
+    font-size: 2em;
+    max-height: 250px;
+    overflow-y: auto;
+}
+.interval-entry {
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+.interval-entry:last-child {
+    border-bottom: none;
+}
+.job-expanded {
+    min-height: 20vh;
+    height: auto !important;
+    background: #f9f9f9;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
